@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Horario FI</title>
 
-  <meta name="root-path" content="{{ url('/') }}">
+  <meta name="_path" content="{{ url('/') }}">
   <meta name="_token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="{{ asset('/css/vendor.css') }}" />
   <link rel="stylesheet" href="{{ asset('/css/app.css') }}" />

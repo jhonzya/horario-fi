@@ -18,7 +18,7 @@ class CrearUsuario extends Migration
             $table->string('token', 100)->unique();
             $table->string('nombre')->default('Invitado');
             $table->string('correo')->nullable();
-            $table->string('avatar')->default(null);
+            $table->string('avatar')->nullable();
             $table->boolean('invitado')->default(true);
             $table->timestamps();
         });

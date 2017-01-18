@@ -27,8 +27,8 @@
     data(){
       return {
         usuario: {
-          id: null,
-          nombre: null,
+          token: null,
+          nombre: 'Invitado',
           correo: null,
           avatar: null,
           invitado: true
@@ -37,8 +37,6 @@
     },
 
     created(){
-      console.log($('meta[name="_token"]').attr('content'));
-
       $.ajaxSetup({ cache: true });
       $.getScript('//connect.facebook.net/en_US/sdk.js', () => {
         FB.init({
@@ -61,7 +59,6 @@
       },
 
       logout(){
-        console.log("Cerrando sesión...");
         FB.logout((response) => {
           this.statusChangeCallback(response);
         });
@@ -80,21 +77,35 @@
       getProfile(){
         FB.api('/me?fields=email,id,name,picture',(response) => {
           this.usuario = {
-            id: response.id,
+            token: response.id,
             nombre: response.name,
             correo: response.email,
             avatar: response.picture.data.url,
             invitado: false
-          }
+          };
+
+          this.saveUser();
         });
       },
 
       createFakeProfile(){
         this.usuario = {
+          token: $('meta[name="_token"]').attr('content'),
           invitado: true,
           nombre: 'Invitado'
         };
+
+        this.saveUser();
+      },
+
+      saveUser(){
+        this.$http.post('save', this.usuario).then((response) => {
+          localStorage.setItem('_token', response.body.token);
+        }, (error) => {
+          console.log(error.body);
+        });
       }
+
     }
   }
 
