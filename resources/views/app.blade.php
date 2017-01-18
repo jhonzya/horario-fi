@@ -6,6 +6,7 @@
   <title>Horario FI</title>
 
   <meta name="root-path" content="{{ url('/') }}">
+  <meta name="_token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="{{ asset('/css/vendor.css') }}" />
   <link rel="stylesheet" href="{{ asset('/css/app.css') }}" />
 </head>

@@ -10,13 +10,15 @@
         </router-link>
       </div>
       <div class="navbar-collapse collapse" id="navbar">
-        <a class="btn btn-success btn-facebook btn-outline btn-sm navbar-btn navbar-right" @click.prevent="login">
+        <a v-if="usuario.invitado" class="btn btn-success btn-facebook btn-outline btn-sm navbar-btn navbar-right" @click.prevent="login">
           <i class="fa fa-facebook"> </i> Log in with Facebook
         </a>
-
-        <ul class="nav navbar-top-links navbar-right">
+        <ul v-else class="nav navbar-top-links navbar-right">
           <li>
-            <a href="#">
+            <span class="m-r-sm text-muted welcome-message">Hola, {{ usuario.nombre }}</span>
+          </li>
+          <li>
+            <a @click.prevent="logout">
               <i class="fa fa-sign-out"></i> Log out
             </a>
           </li>
@@ -33,9 +35,17 @@
 
   export default{
 
+    props: {
+      usuario: {type: Object, required: true}
+    },
+
     methods: {
       login(){
         this.$emit('login');
+      },
+
+      logout(){
+        this.$emit('logout');
       }
     }
 

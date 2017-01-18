@@ -2,7 +2,7 @@
 
   <div id="page-wrapper" class="gray-bg">
     <!-- Page wrapper -->
-    <navbar-component @login="login"></navbar-component>
+    <navbar-component @login="login" @logout="logout" :usuario="usuario"></navbar-component>
 
     <!-- Main view  -->
     <router-view></router-view>
@@ -24,12 +24,26 @@
   export default{
     components: {FooterComponent, NavbarComponent},
 
+    data(){
+      return {
+        usuario: {
+          id: null,
+          nombre: null,
+          correo: null,
+          avatar: null,
+          invitado: true
+        }
+      }
+    },
+
     created(){
+      console.log($('meta[name="_token"]').attr('content'));
+
       $.ajaxSetup({ cache: true });
       $.getScript('//connect.facebook.net/en_US/sdk.js', () => {
         FB.init({
           appId: '1146037498761455',
-          version: 'v2.7' // or v2.1, v2.2, v2.3, ...
+          version: 'v2.7'
         });
         $('#loginbutton,#feedbutton').removeAttr('disabled');
 
@@ -46,27 +60,40 @@
         });
       },
 
-      statusChangeCallback(response){
-        console.log(response);
+      logout(){
+        console.log("Cerrando sesión...");
+        FB.logout((response) => {
+          this.statusChangeCallback(response);
+        });
+      },
 
+      statusChangeCallback(response){
         if (response.status === 'connected') {
-          // Logged into your app and Facebook.
-          this.testAPI();
+          this.getProfile();
         } else if (response.status === 'not_authorized') {
-          // The person is logged into Facebook, but not your app.
-          console.log("Inicia sesión en Horario FI");
+          this.createFakeProfile();
         } else {
-          // The person is not logged into Facebook, so we're not sure if
-          // they are logged into this app or not.
-          console.log("Inicia sesión en Facebook");
+          this.createFakeProfile();
         }
       },
 
-      testAPI(){
-        FB.api('/me', function(response) {
-          console.log('Successful login for: ' + response.name);
-          console.log(response);
+      getProfile(){
+        FB.api('/me?fields=email,id,name,picture',(response) => {
+          this.usuario = {
+            id: response.id,
+            nombre: response.name,
+            correo: response.email,
+            avatar: response.picture.data.url,
+            invitado: false
+          }
         });
+      },
+
+      createFakeProfile(){
+        this.usuario = {
+          invitado: true,
+          nombre: 'Invitado'
+        };
       }
     }
   }
