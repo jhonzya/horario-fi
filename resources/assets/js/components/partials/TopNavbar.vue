@@ -10,6 +10,10 @@
         </router-link>
       </div>
       <div class="navbar-collapse collapse" id="navbar">
+        <a class="btn btn-success btn-facebook btn-outline btn-sm navbar-btn navbar-right" @click.prevent="login">
+          <i class="fa fa-facebook"> </i> Log in with Facebook
+        </a>
+
         <ul class="nav navbar-top-links navbar-right">
           <li>
             <a href="#">
@@ -27,5 +31,13 @@
    * Created by jhonzya on 1/17/17.
    */
 
-  export default{}
+  export default{
+
+    methods: {
+      login(){
+        this.$emit('login');
+      }
+    }
+
+  }
 </script>
