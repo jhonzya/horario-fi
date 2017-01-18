@@ -5,10 +5,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Welcome from '../components/Welcome.vue';
+import Horario from '../components/Horario.vue';
 
 const routes = [
-  { path: '/', component: Welcome, name: 'welcome' }
+  { path: '/', component: Horario, name: 'horario' }
 ];
 
 Vue.use(VueRouter);

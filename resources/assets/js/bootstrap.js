@@ -7,4 +7,5 @@ window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
 require('metismenu');
 require('jquery-slimscroll');
+require('fullcalendar');
 require('imports?define=>false!pace-progress');

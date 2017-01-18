@@ -2,7 +2,8 @@
  * Created by jhonzya on 1/17/17.
  */
 
-require('./bootstrap.js');
+require('./bootstrap');
+require('./inspinia');
 
 import Vue from 'vue';
 import App from './components/App.vue';
