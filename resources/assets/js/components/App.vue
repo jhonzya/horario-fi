@@ -5,7 +5,7 @@
     <navbar-component @login="login" @logout="logout" :usuario="usuario"></navbar-component>
 
     <!-- Main view  -->
-    <router-view></router-view>
+    <router-view :asignaturas="asignaturas"></router-view>
 
     <!-- Footer -->
     <footer-component></footer-component>
@@ -26,6 +26,7 @@
 
     data(){
       return {
+        asignaturas: [],
         usuario: {
           token: null,
           nombre: 'Invitado',
@@ -37,6 +38,10 @@
     },
 
     created(){
+      this.$http.get('asignaturas').then((response) => {
+        this.asignaturas = response.body;
+      });
+
       $.ajaxSetup({ cache: true });
       $.getScript('//connect.facebook.net/en_US/sdk.js', () => {
         FB.init({

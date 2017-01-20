@@ -16,9 +16,10 @@ use Illuminate\Http\Request;
 Route::group(['prefix' => 'v1'], function (){
 
     Route::post('save', 'AuthController@save');
+    Route::get('asignaturas', 'AsignaturaController@asignaturas');
 
     Route::group(['middleware' => 'jwt.auth'], function (){
-        
+
     });
 
 });

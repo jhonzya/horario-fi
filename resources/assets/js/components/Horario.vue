@@ -21,7 +21,7 @@
               Busca por Clave o Nombre
             </p>
             <div class="input-group">
-              <input autofocus type="text" placeholder="Buscar asignatura" class="input form-control">
+              <input v-model="busqueda" autofocus type="text" placeholder="Buscar asignatura" class="input form-control">
               <span class="input-group-btn">
                 <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Buscar</button>
               </span>
@@ -206,6 +206,26 @@
    */
 
   export default{
+
+    props: {
+      asignaturas: {type: Array, required: true}
+    },
+
+    data(){
+      return{
+        busqueda: ''
+      }
+    },
+
+    computed: {
+      resultados(){
+        if(this.busqueda.toString().length < 2) return [];
+
+        return _.filter(this.asignaturas, (item) => {
+          return (item.clave == this.busqueda || item.nombre.indexOf(this.busqueda.toUpperCase()) >= 0)
+        });
+      }
+    },
 
     mounted(){
       $('#calendar').fullCalendar({
