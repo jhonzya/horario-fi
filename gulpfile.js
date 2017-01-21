@@ -22,7 +22,8 @@ elixir((mix) => {
   // Estilos
   mix.sass('app.scss');
   mix.styles([
-    'node_modules/animate.css/animate.css'
+    'node_modules/animate.css/animate.css',
+    'node_modules/select2/dist/css/select2.min.css'
   ], 'public/css/vendor.css', './');
 
   // Scripts

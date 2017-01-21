@@ -17,14 +17,16 @@
             </div>
           </div>
           <div class="ibox-content">
-            <p>
-              Busca por Clave o Nombre
-            </p>
-            <div class="input-group">
-              <input v-model="busqueda" autofocus type="text" placeholder="Buscar asignatura" class="input form-control">
-              <span class="input-group-btn">
-                <button type="button" class="btn btn btn-primary"> <i class="fa fa-search"></i> Buscar</button>
-              </span>
+            <div class="form-group">
+              <select v-model="busqueda" name="asignatura" id="asignatura" class="input form-control" style="width: 100%">
+                <option v-for="asignatura in asignaturas" :value="asignatura.id" v-text="asignatura.nombre"></option>
+              </select>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn btn-primary btn-sm" :disabled="!busqueda" @click.prevent="buscar">
+                  <i class="fa fa-search"></i>
+                  Buscar
+                </button>
             </div>
           </div>
         </div>
@@ -213,21 +215,19 @@
 
     data(){
       return{
-        busqueda: ''
-      }
-    },
-
-    computed: {
-      resultados(){
-        if(this.busqueda.toString().length < 2) return [];
-
-        return _.filter(this.asignaturas, (item) => {
-          return (item.clave == this.busqueda || item.nombre.indexOf(this.busqueda.toUpperCase()) >= 0)
-        });
+        busqueda: null
       }
     },
 
     mounted(){
+      let $asignatura = $(this.$el).find('#asignatura');
+      $asignatura.select2({
+        placeholder: "Selecciona una asignatura"
+      });
+      $asignatura.on("select2:select", (evt) => {
+        this.busqueda = evt.params.data.id;
+      });
+
       $('#calendar').fullCalendar({
         defaultView: 'agendaWeek',
         columnFormat: 'dddd',
@@ -251,6 +251,18 @@
       $('.tabla').slimScroll({
         height: '733px'
       });
+    },
+
+    methods: {
+      buscar(){
+        console.log("buscando...");
+
+        this.$http.get('asignatura/buscar', {params: {id: this.busqueda}}).then((response) => {
+          console.log(response.body);
+        }, (error) => {
+          console.log(error.body);
+        });
+      }
     }
 
   }

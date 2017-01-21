@@ -19,7 +19,7 @@ Route::group(['prefix' => 'v1'], function (){
     Route::get('asignaturas', 'AsignaturaController@asignaturas');
 
     Route::group(['middleware' => 'jwt.auth'], function (){
-
+        Route::get('asignatura/buscar', 'AsignaturaController@buscar');
     });
 
 });
