@@ -50,9 +50,13 @@
                   <div class="text-muted" v-text="formato(grupo)"></div>
                   <div class="actions">
                     <div class="pull-right">
-                      <a class="btn btn-xs btn-outline btn-primary" @click.prevent="inscribir(grupo)">
+                      <a v-if="valida(grupo)" class="btn btn-xs btn-outline btn-primary" @click.prevent="inscribir(grupo)">
                         <i class="fa fa-plus"></i>
                         Agregar
+                      </a>
+                      <a v-else class="btn btn-xs btn-outline btn-warning" @click.prevent="salir(grupo)">
+                        <i class="fa fa-minus"></i>
+                        Salir
                       </a>
                     </div>
                   </div>
@@ -79,36 +83,7 @@
             </div>
             <div id="tab-2" class="tab-pane">
               <div class="panel-body tabla">
-                <table class="table table-hover">
-                  <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Data</th>
-                    <th>User</th>
-                    <th>Value</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td><span class="pie" style="display: none;">0.52,1.041</span><svg class="peity" height="16" width="16"><path d="M 8 8 L 8 0 A 8 8 0 0 1 14.933563796318165 11.990700825968545 Z" fill="#1ab394"></path><path d="M 8 8 L 14.933563796318165 11.990700825968545 A 8 8 0 1 1 7.999999999999998 0 Z" fill="#d7d7d7"></path></svg></td>
-                    <td>Samantha</td>
-                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td><span class="pie" style="display: none;">226,134</span><svg class="peity" height="16" width="16"><path d="M 8 8 L 8 0 A 8 8 0 1 1 2.2452815972907922 13.55726696367198 Z" fill="#1ab394"></path><path d="M 8 8 L 2.2452815972907922 13.55726696367198 A 8 8 0 0 1 7.999999999999998 0 Z" fill="#d7d7d7"></path></svg></td>
-                    <td>Jacob</td>
-                    <td class="text-warning"> <i class="fa fa-level-down"></i> -20% </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td><span class="pie" style="display: none;">0.52/1.561</span><svg class="peity" height="16" width="16"><path d="M 8 8 L 8 0 A 8 8 0 0 1 14.933563796318165 11.990700825968545 Z" fill="#1ab394"></path><path d="M 8 8 L 14.933563796318165 11.990700825968545 A 8 8 0 1 1 7.999999999999998 0 Z" fill="#d7d7d7"></path></svg></td>
-                    <td>Damien</td>
-                    <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                  </tr>
-                  </tbody>
-                </table>
+                <inscritas :inscritas="inscritas" @salir="salir"></inscritas>
               </div>
             </div>
           </div>
@@ -145,7 +120,11 @@
    * Created by jhonzya on 1/17/17.
    */
 
+  import Inscritas from './Inscritas.vue';
+
   export default{
+
+    components: {Inscritas},
 
     props: {
       asignaturas: {type: Array, required: true}
@@ -154,8 +133,17 @@
     data(){
       return{
         busqueda: null,
-        grupos: []
+        grupos: [],
+        inscritas: []
       }
+    },
+
+    created(){
+      this.$http.get('asignatura/inscritas').then((response) => {
+        this.inscritas = response.body;
+      }, (error) => {
+        console.log(error.body);
+      });
     },
 
     mounted(){
@@ -227,8 +215,28 @@
       },
 
       inscribir(grupo){
-        this.$http.post('asignatura/inscribir', grupo).then((response) => {
-          console.log(response.body);
+        this.$http.post('asignatura', grupo).then((response) => {
+          this.inscritas = _.union(this.inscritas, response.body);
+        });
+      },
+
+      valida(grupo){
+        var res = _.find(this.inscritas, (inscrita) => {
+              return (inscrita.grupo == grupo.GRUPO && inscrita.asignatura.clave == grupo.CLAVE);
+            });
+
+        return ! _.isObject(res);
+      },
+
+      salir(grupo){
+        this.$http.delete('asignatura', {params: grupo}).then((response) => {
+          _.each(response.body.grupos, (grupo) => {
+            var index = _.findIndex(this.inscritas, {'id': grupo});
+            if(index >= 0)
+                this.inscritas.splice(index, 1);
+          });
+        }, (error) => {
+          console.log(error.body);
         });
       }
     }

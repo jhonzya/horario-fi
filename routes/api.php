@@ -19,8 +19,11 @@ Route::group(['prefix' => 'v1'], function (){
     Route::get('asignaturas', 'AsignaturaController@asignaturas');
 
     Route::group(['middleware' => 'jwt.auth'], function (){
+        Route::get('asignatura/inscritas', 'AsignaturaController@inscritas');
         Route::get('asignatura/buscar', 'AsignaturaController@buscar');
-        Route::post('asignatura/inscribir', 'AsignaturaController@inscribir');
+
+        Route::post('asignatura', 'AsignaturaController@inscribir');
+        Route::delete('asignatura', 'AsignaturaController@salir');
     });
 
 });

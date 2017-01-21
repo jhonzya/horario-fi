@@ -15,13 +15,21 @@ class AsignaturaController extends Controller
     private $url = "http://inscripciones.ingenieria.unam.mx/consulta_horarios/index.php/horarios/consulta/";
 
     public function asignaturas(){
-        $asignaturas = Asignatura::all();
+        $asignaturas = Asignatura::orderBy('nombre')->get();
         return response()->json($asignaturas);
     }
 
     public function buscar(Request $request){
         $asignatura = Asignatura::find($request->id);
         $grupos = $this->crawler($asignatura->clave);
+
+        return response()->json($grupos);
+    }
+
+    public function inscritas(Request $request){
+        $grupos = $request->user()
+          ->grupos()->with("asignatura")
+          ->get();
 
         return response()->json($grupos);
     }
@@ -34,8 +42,8 @@ class AsignaturaController extends Controller
         );
 
         $colores = [
-          'e53935', 'd81b60', '8e24aa', '5e35b1', '3949ab', '1e88e5', '039be5', '00acc1',
-          '00897b', '43a047', '7cb342', 'c0ca33', 'fdd835', 'ffb300', 'fb8c00', 'f4511e'
+          '#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5', '#039be5', '#00acc1',
+          '#00897b', '#43a047', '#7cb342', '#c0ca33', '#fdd835', '#ffb300', '#fb8c00', '#f4511e'
         ];
         $array_key = array_rand($colores, 1);
 
@@ -56,8 +64,23 @@ class AsignaturaController extends Controller
         $grupos = $request->user()
           ->grupos()->whereIn("grupo.id", $inscripciones)->with("asignatura")
           ->get();
-        
+
         return response()->json($grupos);
+    }
+
+    public function salir(Request $request){
+        $asignatura = Asignatura::where([
+            ['clave', $request->CLAVE],
+            ['tipo', $request->TIPO]
+        ])->first();
+
+        $grupos = $asignatura->grupos()->where('grupo', $request->GRUPO)->get();
+
+        $ids = $grupos->pluck('id');
+        foreach($grupos as $grupo)
+            $variable[] = $request->user()->grupos()->detach($grupo->id);
+
+        return response()->json(['grupos' => $ids]);
     }
 
     private function crawler($clave){
