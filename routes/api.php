@@ -20,6 +20,7 @@ Route::group(['prefix' => 'v1'], function (){
 
     Route::group(['middleware' => 'jwt.auth'], function (){
         Route::get('asignatura/buscar', 'AsignaturaController@buscar');
+        Route::post('asignatura/inscribir', 'AsignaturaController@inscribir');
     });
 
 });

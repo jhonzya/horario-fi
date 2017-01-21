@@ -14,21 +14,16 @@ class Usuario extends Authenticatable
   //  Relaciones
 
   public function busquedas(){
-    return $this->hasMany("Busqueda", "usuario_id");
-  }
-
-  public function busquedas_semestre(){
-    return $this->hasMany("Busqueda", "usuario_id")
-      ->where("busqueda.semestre_id", env("SEMESTRE_ACTUAL"));
+    return $this->hasMany("App\Busqueda", "usuario_id");
   }
 
   public function grupos(){
-    return $this->belongsToMany("Grupo", "inscripcion", "usuario_id", "grupo_id")
-      ->where("semestre_id", env("SEMESTRE_ACTUAL"))->withPivot(["color"]);
+    return $this->belongsToMany("App\Grupo", "inscripcion", "usuario_id", "grupo_id")
+      ->withPivot(["color"]);
   }
 
   public function inscripciones(){
-    return $this->hasMany("Inscripcion", "usuario_id");
+    return $this->hasMany("App\Inscripcion", "usuario_id");
   }
 
 }

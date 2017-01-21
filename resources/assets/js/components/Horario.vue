@@ -22,105 +22,43 @@
                 <option v-for="asignatura in asignaturas" :value="asignatura.id" v-text="asignatura.nombre"></option>
               </select>
             </div>
-            <div class="form-group">
-                <button type="button" class="btn btn btn-primary btn-sm" :disabled="!busqueda" @click.prevent="buscar">
-                  <i class="fa fa-search"></i>
-                  Buscar
-                </button>
-            </div>
+            <button type="button" class="btn btn btn-primary btn-sm" :disabled="!busqueda" @click.prevent="buscar">
+              <i class="fa fa-search"></i>
+              Buscar
+            </button>
+
           </div>
         </div>
         <!-- BÚSQUEDA DE ASIGNATURAS -->
 
         <!-- RESULTADOS -->
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins" v-show="grupos.length > 0">
           <div class="ibox-title">
             <h5>Resultados</h5>
           </div>
-          <div class="ibox-content ibox-heading">
-            <h3><i class="fa fa-envelope-o"></i> Estática</h3>
-            <small><i class="fa fa-tim"></i> 17 grupos para esta materia.</small>
+          <div class="ibox-content ibox-heading" v-if="grupos.length > 0">
+            <h3>{{ grupos[0].ASIGNATURA }}</h3>
+            <small>Clave: {{ grupos[0].CLAVE }} - Grupos: {{ grupos.length }}</small>
           </div>
           <div class="ibox-content resultados">
             <div class="feed-activity-list">
 
-              <div class="feed-element">
+              <div v-for="grupo in grupos" class="feed-element">
                 <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
+                  <small class="pull-right text-navy">{{ grupo.VACANTES }} vacantes</small>
+                  <strong v-text="grupo.PROFESOR_A_"></strong>
+                  <div class="text-muted" v-text="formato(grupo)"></div>
                   <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
+                    <div class="pull-right">
+                      <a class="btn btn-xs btn-outline btn-primary" @click.prevent="inscribir(grupo)">
+                        <i class="fa fa-plus"></i>
+                        Agregar
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="feed-element">
-                <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
-                  <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="feed-element">
-                <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
-                  <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="feed-element">
-                <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
-                  <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="feed-element">
-                <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
-                  <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="feed-element">
-                <div>
-                  <small class="pull-right text-navy">5 vacantes</small>
-                  <strong>Monica Smith</strong>
-                  <div class="small text-muted">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-                  </div>
-                  <div class="actions">
-                    <a class="btn btn-xs btn-outline btn-primary"><i class="fa fa-plus"></i> Inscribir </a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -215,7 +153,8 @@
 
     data(){
       return{
-        busqueda: null
+        busqueda: null,
+        grupos: []
       }
     },
 
@@ -245,7 +184,7 @@
       });
 
       $('.resultados').slimScroll({
-        height: '468px'
+        height: '455px'
       });
 
       $('.tabla').slimScroll({
@@ -255,12 +194,41 @@
 
     methods: {
       buscar(){
-        console.log("buscando...");
+        this.grupos = [];
 
         this.$http.get('asignatura/buscar', {params: {id: this.busqueda}}).then((response) => {
-          console.log(response.body);
+          this.grupos = response.body;
         }, (error) => {
           console.log(error.body);
+        });
+      },
+
+      formato(grupo){
+        var inicio = ("00000" + grupo.INICIO).slice(-4);
+        var fin = ("00000" + grupo.FIN).slice(-4);
+
+        inicio = inicio.slice(0,2)+":"+inicio.slice(2);
+        fin = fin.slice(0,2)+":"+fin.slice(2);
+
+        var horarios = "Horario: ";
+        if(grupo.LUN == "*") horarios += "Lun-";
+        if(grupo.MAR == "*") horarios += "Mar-";
+        if(grupo.MIE == "*") horarios += "Mie-";
+        if(grupo.JUE == "*") horarios += "Jue-";
+        if(grupo.VIE == "*") horarios += "Vie-";
+        if(grupo.SAB == "*") horarios += "Sáb-";
+        horarios = horarios.slice(0, -1);
+        horarios += " / "+inicio+"-"+fin+", ";
+
+        horarios += grupo.TIPO == "T" ?  "Teoría, " : "Laboratorio, ";
+        horarios += "Grupo: "+grupo.GRUPO;
+
+        return horarios;
+      },
+
+      inscribir(grupo){
+        this.$http.post('asignatura/inscribir', grupo).then((response) => {
+          console.log(response.body);
         });
       }
     }

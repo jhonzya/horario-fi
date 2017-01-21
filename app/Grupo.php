@@ -16,19 +16,19 @@ class Grupo extends Model
   //  Relaciones
   
   public function asignatura(){
-    return $this->belongsTo("Asignatura", "asignatura_id");
+    return $this->belongsTo("App\Asignatura", "asignatura_id");
   }
 
   public function inscripciones(){
-    return $this->hasMany("Inscripcion", "grupo_id");
+    return $this->hasMany("App\Inscripcion", "grupo_id");
   }
 
   public function semestre(){
-    return $this->belongsTo("Semestre", "semestre_id");
+    return $this->belongsTo("App\Semestre", "semestre_id");
   }
 
   public function usuarios(){
-    return $this->belongsToMany("Usuario", "inscripcion", "grupo_id", "usuario_id");
+    return $this->belongsToMany("App\Usuario", "inscripcion", "grupo_id", "usuario_id");
   }
 
 

@@ -14,7 +14,7 @@ class Inscripcion extends Model
   //  Relaciones
   
   public function grupo(){
-    return $this->belongsTo("Grupo", "grupo_id");
+    return $this->belongsTo("App\Grupo", "grupo_id");
   }
 
 }

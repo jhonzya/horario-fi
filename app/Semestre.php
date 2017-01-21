@@ -14,13 +14,11 @@ class Semestre extends Model
   //  Relaciones
 
   public function busquedas(){
-    return $this->hasMany("Busqueda", "semestre_id")
-      ->where("semestre_id", env("SEMESTRE_ACTUAL"));
+    return $this->hasMany("App\Busqueda", "semestre_id");
   }
 
   public function grupos(){
-    return $this->hasMany("Grupo", "semestre_id")
-      ->where("semestre_id", env("SEMESTRE_ACTUAL"));
+    return $this->hasMany("App\Grupo", "semestre_id");
   }
   
 }

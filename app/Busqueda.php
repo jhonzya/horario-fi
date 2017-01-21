@@ -14,15 +14,15 @@ class Busqueda extends Model
   //  Relaciones
 
   public function asignatura(){
-    return $this->belongsTo("Asignatura", "asignatura_id");
+    return $this->belongsTo("App\Asignatura", "asignatura_id");
   }
 
   public function semestre(){
-    return $this->belongsTo("Semestre", "semestre_id");
+    return $this->belongsTo("App\Semestre", "semestre_id");
   }
 
   public function usuario(){
-    return $this->belongsTo("Usuario", "usuario_id");
+    return $this->belongsTo("App\Usuario", "usuario_id");
   }
   
 }
