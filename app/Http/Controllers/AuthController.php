@@ -23,14 +23,10 @@ class AuthController extends Controller
             return response()->json(['error' => $validate->errors()->first()]);
 
         $usuario = Usuario::updateOrCreate(['token' => $request->token], $request->all());
-        $token = JWTAuth::fromUser($usuario);
-        return response()->json(compact('token'));
+        $_token = JWTAuth::fromUser($usuario);
 
-    }
+        return response()->json(compact('_token', 'usuario'));
 
-    public function user(Request $request)
-    {
-        return response()->json(['usuario' => $request->user()]);
     }
 
 }

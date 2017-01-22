@@ -3,7 +3,6 @@
   <div class="wrapper wrapper-content  animated fadeIn">
 
     <div class="row">
-
       <div class="col-sm-4">
 
         <!-- BÚSQUEDA DE ASIGNATURAS -->
@@ -22,11 +21,14 @@
                 <option v-for="asignatura in asignaturas" :value="asignatura.id" v-text="asignatura.nombre"></option>
               </select>
             </div>
+            <button class="btn btn-success btn-facebook btn-sm" :disabled="!busqueda" @click.prevent="comentarios">
+              <i class="fa fa-facebook"></i>
+              Comentarios
+            </button>
             <button type="button" class="btn btn btn-primary btn-sm" :disabled="!busqueda" @click.prevent="buscar">
               <i class="fa fa-search"></i>
               Buscar
             </button>
-
           </div>
         </div>
         <!-- BÚSQUEDA DE ASIGNATURAS -->
@@ -92,25 +94,7 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="ibox float-e-margins">
-          <div class="ibox-title">
-            <h5>Estática
-              <small class="m-l-sm">Comentarios y sugerencias de profesores</small>
-            </h5>
-            <div class="ibox-tools">
-              <a class="collapse-link">
-                <i class="fa fa-chevron-up"></i>
-              </a>
-            </div>
-          </div>
-          <div class="ibox-content">
-            Comentarios de facebook
-          </div>
-        </div>
-      </div>
-    </div>
+    <comentarios id="comentarios" v-if="asignatura" :asignatura="asignatura"></comentarios>
   </div>
 
 </template>
@@ -122,13 +106,15 @@
 
   import Inscritas from './Inscritas.vue';
   import Calendario from './Calendario.vue';
+  import Comentarios from './Comentarios.vue';
 
   export default{
 
-    components: {Inscritas, Calendario},
+    components: {Inscritas, Calendario, Comentarios},
 
     props: {
-      asignaturas: {type: Array, required: true}
+      asignaturas: {type: Array, required: true},
+      usuario: {type: Object, required: true},
     },
 
     data(){
@@ -139,12 +125,10 @@
       }
     },
 
-    created(){
-      this.$http.get('asignatura/inscritas').then((response) => {
-        this.inscritas = response.body;
-      }, (error) => {
-        console.log(error.body);
-      });
+    computed: {
+      asignatura(){
+        return _.find(this.asignaturas, ['id', parseInt(this.busqueda)]);
+      }
     },
 
     mounted(){
@@ -165,7 +149,25 @@
       });
     },
 
+    watch: {
+      usuario(valor){
+        if(valor.guardado) this.get_inscritas();
+      }
+    },
+
     methods: {
+      comentarios(){
+        $("#comentarios").ScrollTo();
+      },
+
+      get_inscritas(){
+        this.$http.get('asignatura/inscritas').then((response) => {
+          this.inscritas = response.body;
+        }, (error) => {
+          console.log(error.body);
+        });
+      },
+
       buscar(){
         this.grupos = [];
 

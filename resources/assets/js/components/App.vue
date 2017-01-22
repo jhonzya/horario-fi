@@ -5,7 +5,7 @@
     <navbar-component @login="login" @logout="logout" :usuario="usuario"></navbar-component>
 
     <!-- Main view  -->
-    <router-view :asignaturas="asignaturas"></router-view>
+    <router-view :asignaturas="asignaturas" :usuario="usuario"></router-view>
 
     <!-- Footer -->
     <footer-component></footer-component>
@@ -32,12 +32,15 @@
           nombre: 'Invitado',
           correo: null,
           avatar: null,
-          invitado: true
+          invitado: true,
+          guardado: false
         }
       }
     },
 
     created(){
+      localStorage.removeItem('_token');
+
       this.$http.get('asignaturas').then((response) => {
         this.asignaturas = response.body;
       });
@@ -65,6 +68,7 @@
 
       logout(){
         FB.logout((response) => {
+          this.usuario.guardado = false;
           this.statusChangeCallback(response);
         });
       },
@@ -81,7 +85,7 @@
 
       getProfile(){
         FB.api('/me?fields=email,id,name,picture',(response) => {
-          this.usuario = {
+          var usuario = {
             token: response.id,
             nombre: response.name,
             correo: response.email,
@@ -89,23 +93,26 @@
             invitado: false
           };
 
-          this.saveUser();
+          this.saveUser(usuario);
         });
       },
 
       createFakeProfile(){
-        this.usuario = {
+        var usuario = {
           token: $('meta[name="_token"]').attr('content'),
           invitado: true,
           nombre: 'Invitado'
         };
 
-        this.saveUser();
+        this.saveUser(usuario);
       },
 
-      saveUser(){
-        this.$http.post('save', this.usuario).then((response) => {
-          localStorage.setItem('_token', response.body.token);
+      saveUser(usuario){
+        this.$http.post('save', usuario).then((response) => {
+          localStorage.setItem('_token', response.body._token);
+
+          this.usuario = response.body.usuario;
+          this.usuario.guardado = true;
         }, (error) => {
           console.log(error.body);
         });
