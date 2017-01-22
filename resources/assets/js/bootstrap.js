@@ -10,3 +10,5 @@ require('jquery-slimscroll');
 require('fullcalendar');
 require('imports?define=>false!pace-progress');
 require('select2');
+window.moment = require('moment');
+require('./es');

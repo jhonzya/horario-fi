@@ -78,7 +78,7 @@
           <div class="tab-content">
             <div id="tab-1" class="tab-pane active">
               <div class="panel-body">
-                <div id="calendar"></div>
+                <calendario :inscritas="inscritas"></calendario>
               </div>
             </div>
             <div id="tab-2" class="tab-pane">
@@ -121,10 +121,11 @@
    */
 
   import Inscritas from './Inscritas.vue';
+  import Calendario from './Calendario.vue';
 
   export default{
 
-    components: {Inscritas},
+    components: {Inscritas, Calendario},
 
     props: {
       asignaturas: {type: Array, required: true}
@@ -153,22 +154,6 @@
       });
       $asignatura.on("select2:select", (evt) => {
         this.busqueda = evt.params.data.id;
-      });
-
-      $('#calendar').fullCalendar({
-        defaultView: 'agendaWeek',
-        columnFormat: 'dddd',
-        allDaySlot: false,
-        slotDuration: '00:30:00',
-        lang: 'es',
-        contentHeight: 660,
-        header: {
-          left: '',
-          right: ''
-        },
-        minTime: '07:00',
-        maxTime: '23:00',
-        hiddenDays: [0]
       });
 
       $('.resultados').slimScroll({
