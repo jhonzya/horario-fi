@@ -91,6 +91,8 @@ class AsignaturaController extends Controller
             return $this->normalize($nodo->text());
         });
 
+        $headers = array_unique($headers);
+
         $grupos = $crawler->filter("table > tr")->each(function ($nodo) use ($headers){
             $grupo = $nodo->filter("td")->each(function ($td){
                 return $td->text();
